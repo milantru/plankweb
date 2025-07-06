@@ -700,8 +700,14 @@ function AnalyticalPage() {
 	): ChainResult {
 		// unprocessedResultPerDataSourceExecutor[dataSourceName] -> UnprocessedResult
 		const dataSourceExecutorsCount = Object.keys(unprocessedResultPerDataSourceExecutor).length;
+		// bindingSiteSupportCounterTmp[residue index in structure (of pocket)]: number of data sources supporting pocket on the index
+		const bindingSiteSupportCounterTmp: Record<number, number> = {};
 		if (dataSourceExecutorsCount == 0) {
 			// if we dont have any result from any data source executor, then we have nothing to align
+			setBindingSiteSupportCounter(prevState => ({
+				...prevState,
+				[chain]: bindingSiteSupportCounterTmp
+			}));
 			return { querySequence: "", querySeqToStrMapping: {}, dataSourceExecutorResults: {}, conservations: [] };
 		}
 
@@ -886,8 +892,6 @@ function AnalyticalPage() {
 
 		/* "Postprocessing phase": Update all residue indices of each binding site, seq to struct mappings,
 		 * also count how many data sources support certain binding site and calculate avg conservations if required. */
-		// bindingSiteSupportCounterTmp[residue index in structure (of pocket)]: number of data sources supporting pocket on the index
-		const bindingSiteSupportCounterTmp: Record<number, number> = {};
 		for (const [dataSourceName, result] of Object.entries(unprocessedResultPerDataSourceExecutor)) {
 			let supporterCounted: Record<number, boolean> = {}; // one data source can support residue just once
 
