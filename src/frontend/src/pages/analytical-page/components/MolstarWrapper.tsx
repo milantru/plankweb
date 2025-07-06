@@ -65,7 +65,7 @@ type Props = {
 	selectedStructures: StructureOption[];
 	// bindingSiteSupportCounter[residue index in structure (of pocket)] -> number of data sources supporting that the residue index is part of binding site
 	bindingSiteSupportCounter: Record<number, number>;
-	dataSourceCount: number;
+	dataSourceCount: number; // ATTENTION! Count of data sources with result (i.e., ones which did not fail and provided result).
 	// queryProteinBindingSitesData[dataSourceName][chain][bindingSiteId] -> true/false to show bindings site (and ligands if available) 
 	queryProteinBindingSitesData: Record<string, Record<string, Record<string, boolean>>>;
 	// similarProteinBindingSitesData[dataSourceName][pdbCode][chain][bindingSiteId] -> true/false to show bindings site (and ligands if available) 
@@ -342,7 +342,7 @@ export const MolStarWrapper = forwardRef(({
 	function getPocketTransparency(supportersCount: number | null = null) {
 		const defaultValue = 1; // No transparency
 
-		if (!supportersCount) {
+		if (!supportersCount || dataSourceCount === 0) {
 			return defaultValue;
 		}
 

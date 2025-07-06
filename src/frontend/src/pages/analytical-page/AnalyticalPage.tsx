@@ -378,7 +378,8 @@ function AnalyticalPage() {
 								selectedChain={selectedChain}
 								selectedStructures={selectedStructures}
 								bindingSiteSupportCounter={bindingSiteSupportCounter[selectedChain]}
-								dataSourceCount={dataSourceExecutors.current.length}
+								// Count of data sources that actually returned results should be provided
+								dataSourceCount={dataSourceExecutors.current.filter(x => x.result).length}
 								queryProteinBindingSitesData={queryProteinBindingSitesData}
 								similarProteinBindingSitesData={similarProteinBindingSitesData}
 								onStructuresLoadingStart={() => setIsMolstarLoadingStructures(true)}
@@ -974,6 +975,9 @@ function AnalyticalPage() {
 		const unalignedSimProtsTmp: Record<string, UnalignedSimilarProtein[]> = {};
 
 		for (const dse of dataSourceExecutors) {
+			if (!dse.result) {
+				continue; // No result for this data source executor (executor probably failed), so skip it.
+			}
 			const unprocessedResultWithoutSimilarProteins: UnalignedResult = {
 				id: dse.result.id,
 				sequence: dse.result.sequence,
