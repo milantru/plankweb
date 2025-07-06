@@ -185,6 +185,8 @@ function AnalyticalPage() {
 	// querySeqMapping[idxFrom before aligning] -> idxTo after aligning (to master query seq)
 	const querySeqMapping = useRef<Record<number, number>>({});
 	const isFirstRender = useRef<boolean>(true); // used to disable turning on polling when user visits analytical page for the first time
+	// Number of data source executors that did not fail and returned result
+	const [numOfDseWhichReturnedResult, setNumOfDseWhichReturnedResult] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (isFirstRender.current) {
@@ -371,7 +373,7 @@ function AnalyticalPage() {
 					)}
 				</div>
 				<div id="visualization-molstar">
-					{currChainResult && selectedChain && selectedChain in bindingSiteSupportCounter ? (<>
+					{currChainResult && selectedChain && selectedChain in bindingSiteSupportCounter && numOfDseWhichReturnedResult !== null ? (<>
 						<div className="w-100 d-flex justify-content-center align-items-center mb-2 px-4">
 							<MolStarWrapper ref={molstarWrapperRef}
 								chainResult={currChainResult}
@@ -379,7 +381,7 @@ function AnalyticalPage() {
 								selectedStructures={selectedStructures}
 								bindingSiteSupportCounter={bindingSiteSupportCounter[selectedChain]}
 								// Count of data sources that actually returned results should be provided
-								dataSourceCount={dataSourceExecutors.current.filter(x => x.result).length}
+								dataSourceCount={numOfDseWhichReturnedResult}
 								queryProteinBindingSitesData={queryProteinBindingSitesData}
 								similarProteinBindingSitesData={similarProteinBindingSitesData}
 								onStructuresLoadingStart={() => setIsMolstarLoadingStructures(true)}
@@ -1004,6 +1006,7 @@ function AnalyticalPage() {
 
 		unalignedResult.current = unalignedResultTmp;
 		unalignedSimProts.current = unalignedSimProtsTmp;
+		setNumOfDseWhichReturnedResult(Object.keys(unalignedResultTmp).length);
 	}
 
 	/**
