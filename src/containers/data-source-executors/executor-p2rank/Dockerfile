@@ -9,7 +9,7 @@ RUN addgroup --gid ${GID} user \
 # Install basic packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-      openjdk-17-jdk \
+      openjdk-21-jdk \
       wget \
   && rm -rf /var/lib/apt/lists/* 
 
